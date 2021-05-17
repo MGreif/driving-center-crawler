@@ -9,3 +9,10 @@ https://www.drivingcenter.de/
 
 - Execute `npm start` in root dir
 - Thats it!
+
+# Dependencies
+- Puppeteer
+- Puppeteer-extra
+- Puppeteer-extra-plugin-stealth
+- XmlSerializer (Gonna be removed soon)
+- DOMParser (Gonna be removed soon)
