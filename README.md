@@ -3,9 +3,8 @@ Crawling all appointments on the drivingcenter page.
 
 ---
 
-This crawler crawls all available motorcycle trainings on the Driving-Center Groß-Dölln website
+This crawler crawls all available motorcycle trainings on the [Driving-Center Groß-Dölln](https://www.drivingcenter.de/) website.
 
-https://www.drivingcenter.de/
 
 # Instructions
 
@@ -20,5 +19,5 @@ https://www.drivingcenter.de/
 - DOMParser (Gonna be removed soon)
 
 # Whats Coming Next
-- Using nodemailer to inform the user via email if a training suddenly becomes available
+- Using [nodemailer](https://github.com/nodemailer/nodemailer) to inform the user via email if a training suddenly becomes available
 - Storing the data in an Database and analyzing the data
