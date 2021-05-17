@@ -24,6 +24,27 @@ puppeteer.launch({ headless: true }).then(async browser => {
   const allPagesWithAppointments = await Promise.all(allBookingPages.map(helper.delayLoop(helper.getListOfAppointmentsForBookingPage, 5000)))
   console.log(allPagesWithAppointments)
 
+  const allPagesWithAvailableAppointments = allPagesWithAppointments.map(page => {
+    return page.filter(appointment => appointment.available > 0)
+  }).filter(x => x.length)
+
+  console.log('------------------- Available Trainings -------------------\n')
+  console.log(allPagesWithAvailableAppointments.forEach(page => {
+    console.log(`\n-------- ${page[0].training} --------\n`)
+    page.forEach(appointment => {
+      const {
+        begin,
+        end,
+        available,
+        price,
+        link
+      } = appointment
+      const _begin = new Date(begin).toDateString()
+      const _end = new Date(end).toDateString()
+      console.log(`--> Begin: ${_begin} - End: ${_end} - Available: ${available} - ${price} - ${link}`)
+    })
+  }))
+
   await browser.close()
 })
 
@@ -77,8 +98,15 @@ function usePuppeteer () {
       })
     })
 
+    const parseDate = (trainingDate = '06.06.2021 08:30') => {
+      const [_date, time] = trainingDate.split(' ')
+      const [day, month, year] = _date.split('.')
+
+      return new Date(Date.parse(`${month}.${day}.${year} ${time}`))
+    }
+
     return rows.map(row => {
-      if (row.length === 3) {
+      if (row.length < 6) {
         return {
           training: `${row[0]} - Gutschein`,
           price: row[1]
@@ -86,12 +114,12 @@ function usePuppeteer () {
       }
       return {
         training: row[0],
-        begin: row[1],
-        end: row[2],
+        begin: parseDate(row[1]),
+        end: parseDate(row[2]),
         location: row[4],
         available: row[5],
         price: row[6],
-        link: row[7]
+        link: row[8]
       }
     })
   }
