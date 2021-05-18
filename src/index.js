@@ -36,7 +36,7 @@ puppeteer.launch({ headless: true }).then(async browser => {
     return page.filter(appointment => appointment.available > 0)
   }).filter(x => x.length)
 
-  console.log('------------------- Available Trainings -------------------\n')
+  console.log('\n\n------------------- Available Trainings -------------------\n')
   allPagesWithAvailableAppointments.forEach(page => {
     console.log(`\n-------- ${page[0].training} --------\n`)
     page.forEach(appointment => {
@@ -99,7 +99,7 @@ function usePuppeteer () {
 
   const getListOfAppointmentsForBookingPage = async (bookingPage) => {
     const currentPage = await page.evaluate(() => document.location.href)
-    console.log('current page:', currentPage)
+    console.log('\ncurrent page:', currentPage)
     console.log('now crawling page:', bookingPage)
 
     await page.goto(bookingPage)
