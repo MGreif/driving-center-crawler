@@ -6,7 +6,7 @@ const puppeteer = require('puppeteer-extra')
 puppeteer.use(StealthPlugin())
 
 puppeteer.launch({ headless: true }).then(async browser => {
-  console.log('Running crawler...')
+  console.log('running crawler...')
   const page = await browser.newPage()
   const helper = usePuppeteer()
   const DELAY_HOMEPAGE = 2000
@@ -20,8 +20,8 @@ puppeteer.launch({ headless: true }).then(async browser => {
   const allTrainings = await helper.getAllTrainings()
   const allBookingPages = await helper.getAllBookingPages()
 
-  console.log('all Training:', allTrainings)
-  console.log('all Booking Pages:', allBookingPages)
+  console.log('all trainings:', allTrainings)
+  console.log('all booking pages:', allBookingPages)
 
   const allPagesWithAppointments = await Promise.all(
     allBookingPages.map(
@@ -121,7 +121,7 @@ function logAllTrainings (pagesWithTrainings) {
       } = training
       const _begin = new Date(begin).toDateString()
       const _end = new Date(end).toDateString()
-      console.log(`--> Begin: ${_begin} - End: ${_end} - Available: ${available} - ${price} - ${link}`)
+      console.log(`- - - > Begin: ${_begin} - End: ${_end} - Available: ${available} - ${price} - ${link}`)
     })
   })
 }
