@@ -7,7 +7,7 @@ This crawler crawls all available motorcycle trainings on the [Driving-Center Gr
 
 
 # Instructions
-
+- Execute `npm i` to install all dependencies
 - Execute `npm start` in root dir
 - Thats it!
 
