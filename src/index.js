@@ -63,22 +63,6 @@ function usePuppeteer () {
     }, selector)
   }
 
-  // This function is used to map through an array of items,
-  // and execute a function one after another
-  /*
-  Example: await Promise.all(numbers.map(delayLoop((num) => num * num, 1000)))
-  Each second one items of the Array numbers gets squared
-  */
-  function delayLoop (fn, delay) {
-    return (name, i) => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve(fn(name))
-        }, i * delay)
-      })
-    }
-  };
-
   const getListOfAppointmentsForBookingPage = async (bookingPage) => {
     const currentPage = await page.evaluate(() => document.location.href)
     console.log('\ncurrent page:', currentPage)
@@ -94,13 +78,6 @@ function usePuppeteer () {
         return Object.values(row).map(column => column.href ? column.href : column.innerText)
       })
     })
-
-    const parseDate = (trainingDate = '06.06.2021 08:30') => {
-      const [_date, time] = trainingDate.split(' ')
-      const [day, month, year] = _date.split('.')
-
-      return new Date(Date.parse(`${month}.${day}.${year} ${time}`))
-    }
 
     return rows.map(row => {
       if (row.length < 6) {
@@ -153,4 +130,27 @@ function filterTrainingsForAvailable (pagesWithTrainings) {
   return pagesWithTrainings.map(page => {
     return page.filter(appointment => appointment.available > 0)
   }).filter(x => x.length)
+}
+
+// This function is used to map through an array of items,
+// and execute a function one after another
+/*
+Example: await Promise.all(numbers.map(delayLoop((num) => num * num, 1000)))
+Each second one items of the Array numbers gets squared
+*/
+function delayLoop (fn, delay) {
+  return (name, i) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(fn(name))
+      }, i * delay)
+    })
+  }
+}
+
+function parseDate (trainingDate = '01.01.1970 23:59') {
+  const [_date, time] = trainingDate.split(' ')
+  const [day, month, year] = _date.split('.')
+
+  return new Date(Date.parse(`${month}.${day}.${year} ${time}`))
 }
