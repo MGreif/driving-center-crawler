@@ -7,21 +7,28 @@ puppeteer.use(StealthPlugin())
 
 puppeteer.launch({ headless: true }).then(async browser => {
   console.log('running crawler...')
+  const { paramIsUsed } = checkForParams()
   const page = await browser.newPage()
   const helper = usePuppeteer()
   const DELAY_HOMEPAGE = 2000
   const DELAY_TRAINING_PAGE = 5000
 
-  page.setViewport({ width: 1366, height: 768 })
   helper.initPage(page)
+  page.setViewport({ width: 1366, height: 768 })
+
+  const TRACK_DAY_LINK = await helper.getTrackDayLink()
 
   await page.goto('https://www.drivingcenter.de/fahrtrainings/fahrtrainings-motorrad/')
   await page.waitForTimeout(DELAY_HOMEPAGE)
   const allTrainings = await helper.getAllTrainings()
   const allBookingPages = await helper.getAllBookingPages()
 
-  console.log('all trainings:', allTrainings)
-  console.log('all booking pages:', allBookingPages)
+  if (paramIsUsed('--track-days')) {
+    allBookingPages.push(TRACK_DAY_LINK)
+  }
+
+  console.log('\nall trainings:', allTrainings)
+  console.log('\nall booking pages:', allBookingPages)
 
   const allPagesWithAppointments = await Promise.all(
     allBookingPages.map(
@@ -61,6 +68,23 @@ function usePuppeteer () {
       const results = [...document.querySelectorAll(sel)]
       return results.map(item => item.href)
     }, selector)
+  }
+
+  const getTrackDayLink = async () => {
+    const previousPage = await page.evaluate(() => document.location.href)
+    const selector = '.am-button-buchen'
+    console.log('crawling track-day link')
+
+    await page.goto('https://www.drivingcenter.de/freies-fahren/freies-fahren-motorrad/')
+    await page.waitForTimeout(1000)
+
+    const result = await page.evaluate((sel) => {
+      const bookingButton = document.querySelector(sel).href
+      return bookingButton
+    }, selector)
+
+    await page.goto(previousPage)
+    return result
   }
 
   const getListOfAppointmentsForBookingPage = async (bookingPage) => {
@@ -103,7 +127,8 @@ function usePuppeteer () {
     getAllTrainings,
     getAllBookingPages,
     getListOfAppointmentsForBookingPage,
-    delayLoop
+    delayLoop,
+    getTrackDayLink
   }
 }
 
@@ -153,4 +178,31 @@ function parseDate (trainingDate = '01.01.1970 23:59') {
   const [day, month, year] = _date.split('.')
 
   return new Date(Date.parse(`${month}.${day}.${year} ${time}`))
+}
+
+function checkForParams () {
+  const args = [...process.argv]
+  const nodePath = args.shift()
+  const filePath = args.shift()
+
+  const paramIsUsed = (param) => {
+    return args.includes(param)
+  }
+
+  const getValueOfParam = (param, defaultValue = null) => {
+    const indexOfParam = arguments.indexOf(param)
+    const value = args[indexOfParam] + 1 || defaultValue
+    if (!value) {
+      throw Error(`Argument: '${param}' needs a value`)
+    }
+
+    return value
+  }
+
+  return {
+    paramIsUsed,
+    getValueOfParam,
+    nodePath,
+    filePath
+  }
 }

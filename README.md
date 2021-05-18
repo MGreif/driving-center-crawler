@@ -8,7 +8,9 @@ This crawler crawls all available motorcycle trainings on the [Driving-Center Gr
 
 # Instructions
 - Execute `npm i` to install all dependencies
-- Execute `npm start` in root dir
+- Execute 
+  - `npm start` in root dir
+  - `npm start -- --track-days` in root dir (`-- --track-days` adds the parameter `--track-day` to the script. `--` before the param is necessary to pass the params through npm start to `node ./src/index.js`) The Param --track-days adds the track days to the list of crawling sites
 - Thats it!
 
 # Dependencies
