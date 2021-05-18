@@ -32,26 +32,8 @@ puppeteer.launch({ headless: true }).then(async browser => {
     )
   )
 
-  const allPagesWithAvailableAppointments = allPagesWithAppointments.map(page => {
-    return page.filter(appointment => appointment.available > 0)
-  }).filter(x => x.length)
-
-  console.log('\n\n------------------- Available Trainings -------------------\n')
-  allPagesWithAvailableAppointments.forEach(page => {
-    console.log(`\n-------- ${page[0].training} --------\n`)
-    page.forEach(appointment => {
-      const {
-        begin,
-        end,
-        available,
-        price,
-        link
-      } = appointment
-      const _begin = new Date(begin).toDateString()
-      const _end = new Date(end).toDateString()
-      console.log(`--> Begin: ${_begin} - End: ${_end} - Available: ${available} - ${price} - ${link}`)
-    })
-  })
+  const allPagesWithAvailableAppointments = filterTrainingsForAvailable(allPagesWithAppointments)
+  logAllTrainings(allPagesWithAvailableAppointments)
 
   await browser.close()
 })
@@ -146,4 +128,29 @@ function usePuppeteer () {
     getListOfAppointmentsForBookingPage,
     delayLoop
   }
+}
+
+function logAllTrainings (pagesWithTrainings) {
+  console.log('\n\n------------------- Available Trainings -------------------\n')
+  pagesWithTrainings.forEach(page => {
+    console.log(`\n-------- ${page[0].training} --------\n`)
+    page.forEach(training => {
+      const {
+        begin,
+        end,
+        available,
+        price,
+        link
+      } = training
+      const _begin = new Date(begin).toDateString()
+      const _end = new Date(end).toDateString()
+      console.log(`--> Begin: ${_begin} - End: ${_end} - Available: ${available} - ${price} - ${link}`)
+    })
+  })
+}
+
+function filterTrainingsForAvailable (pagesWithTrainings) {
+  return pagesWithTrainings.map(page => {
+    return page.filter(appointment => appointment.available > 0)
+  }).filter(x => x.length)
 }
