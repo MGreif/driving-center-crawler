@@ -73,7 +73,7 @@ function usePuppeteer () {
   const getTrackDayLink = async () => {
     const previousPage = await page.evaluate(() => document.location.href)
     const selector = '.am-button-buchen'
-    console.log('crawling track-day link')
+    console.log('crawling track-day link...')
 
     await page.goto('https://www.drivingcenter.de/freies-fahren/freies-fahren-motorrad/')
     await page.waitForTimeout(1000)
