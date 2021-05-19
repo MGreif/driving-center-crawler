@@ -16,14 +16,13 @@ puppeteer.launch({ headless: true }).then(async browser => {
   helper.initPage(page)
   page.setViewport({ width: 1366, height: 768 })
 
-  const TRACK_DAY_LINK = await helper.getTrackDayLink()
-
   await page.goto('https://www.drivingcenter.de/fahrtrainings/fahrtrainings-motorrad/')
   await page.waitForTimeout(DELAY_HOMEPAGE)
   const allTrainings = await helper.getAllTrainings()
   const allBookingPages = await helper.getAllBookingPages()
 
   if (paramIsUsed('--track-days')) {
+    const TRACK_DAY_LINK = await helper.getTrackDayLink()
     allBookingPages.push(TRACK_DAY_LINK)
   }
 
