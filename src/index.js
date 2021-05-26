@@ -113,6 +113,7 @@ function usePuppeteer () {
         training: row[0],
         begin: parseDate(row[1]),
         end: parseDate(row[2]),
+        circuit: row[3],
         location: row[4],
         available: row[5],
         price: row[6],
@@ -135,19 +136,34 @@ function logAllTrainings (pagesWithTrainings) {
   console.log('\n\n------------------- Available Trainings -------------------\n')
   pagesWithTrainings.forEach(page => {
     console.log(`\n-------- ${page[0].training} --------\n`)
-    page.forEach(training => {
-      const {
-        begin,
-        end,
-        available,
-        price,
-        link
-      } = training
-      const _begin = new Date(begin).toDateString()
-      const _end = new Date(end).toDateString()
-      console.log(`- - - > Begin: ${_begin} - End: ${_end} - Available: ${available} - ${price} - ${link}`)
-    })
+    page.forEach(logTraining)
   })
+}
+
+function logTraining (training) {
+  const {
+    training: name,
+    begin,
+    price,
+    end,
+    available,
+    link,
+    circuit
+  } = training
+
+  const _begin = new Date(begin).toDateString()
+  const _end = new Date(end).toDateString()
+
+  const isRacing = name.match(/Freies(\s|-)?Fahren/i)
+  const isCoupon = name.match(/Gutschein/i)
+
+  if (isRacing) {
+    console.log(`- - - > Group: ${circuit} - Begin: ${_begin} - End: ${_end} - Available: ${available} - ${price} - ${link}`)
+  } else if (isCoupon) {
+    console.log(`- - - > Training: ${name} - ${price}`)
+  } else {
+    console.log(`- - - > Begin: ${_begin} - End: ${_end} - Available: ${available} - ${price} - ${link}`)
+  }
 }
 
 function filterTrainingsForAvailable (pagesWithTrainings) {
