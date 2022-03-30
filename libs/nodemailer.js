@@ -11,7 +11,7 @@ const sendMail = async (stringifiedHtml = "") => {
     NODEMAILER_SEND_MAILS
   } = process.env
 
-  if (!Boolean(NODEMAILER_SEND_MAILS)) {
+  if (NODEMAILER_SEND_MAILS === false) {
     return
   }
 

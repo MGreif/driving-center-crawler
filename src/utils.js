@@ -2,10 +2,9 @@ const fs = require('fs')
 const handlebars = require('handlebars')
 
 function createMailContent(data = []) {
-  data.pop()
   const html = fs.readFileSync(__dirname + '/../templates/email.hbs','utf8').toString();
   const template = handlebars.compile(html)
-  return template(data)
+  return template(data.filter(data => data.find(appointment => appointment.training)))
 }
 
 function usePuppeteer () {
@@ -83,6 +82,22 @@ function usePuppeteer () {
       }
     })
   }
+  const getTrackDayLink = async () => {
+    const previousPage = await page.evaluate(() => document.location.href)
+    const selector = '.am-button-buchen'
+    console.log('crawling track-day link')
+
+    await page.goto('https://www.drivingcenter.de/freies-fahren/freies-fahren-motorrad/')
+    await page.waitForTimeout(1000)
+
+    const result = await page.evaluate((sel) => {
+      const bookingButton = document.querySelector(sel).href
+      return bookingButton
+    }, selector)
+
+    await page.goto(previousPage)
+    return result
+  }
 
   return {
     initPage,
@@ -90,8 +105,36 @@ function usePuppeteer () {
     getAllBookingPages,
     getListOfAppointmentsForBookingPage,
     initBrowser,
-    delayLoop
+    delayLoop,
+    getTrackDayLink
   }
 }
 
-module.exports = { usePuppeteer, createMailContent }
+function checkForParams () {
+  const args = [...process.argv]
+  const nodePath = args.shift()
+  const filePath = args.shift()
+
+  const paramIsUsed = (param) => {
+    return args.includes(param)
+  }
+
+  const getValueOfParam = (param, defaultValue = null) => {
+    const indexOfParam = arguments.indexOf(param)
+    const value = args[indexOfParam] + 1 || defaultValue
+    if (!value) {
+      throw Error(`Argument: '${param}' needs a value`)
+    }
+
+    return value
+  }
+
+  return {
+    paramIsUsed,
+    getValueOfParam,
+    nodePath,
+    filePath
+  }
+}
+
+module.exports = { usePuppeteer, createMailContent, checkForParams }
