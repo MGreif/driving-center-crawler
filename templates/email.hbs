@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      h1 {
+        color: blue;
+      }
+      table {
+        border: 3px solid #303030;
+        border-collapse: collapse;
+      }
+
+      table th, table td {
+        padding: 5px;
+      }
+
+    </style>
+  </head>
+  <body>
+  <h1>Drivingcenter Trainings</h1>
+  {{#each this}}
+  <h2>{{this.[0].training}}</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Beginn</th>
+          <th>Ende</th>
+          <th>Verfügbar</th>
+          <th>Preis</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each this}}
+        <tr>
+          <td>{{this.begin}}</td>
+          <td>{{this.end}}</td>
+          <td>{{this.available}}</td>
+          <td>{{this.price}}</td>
+          <td><a href="{{this.link}}">click</a></td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  {{/each}}
+</body>
+</html>
